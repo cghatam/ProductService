@@ -20,4 +20,7 @@ public interface ProductService {
     Product createProduct(Product product);
 
 
+    Product updateProductUsingPatch(Product product);
+
+    public ResponseEntity<Product>  getProductByIdUsingStoredProc(Long id);
 }

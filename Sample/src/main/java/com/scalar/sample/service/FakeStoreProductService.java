@@ -8,6 +8,7 @@ import com.scalar.sample.model.Product;
 import jakarta.websocket.OnClose;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 
@@ -22,9 +23,9 @@ import org.springframework.web.client.RestTemplate;
 import java.util.LinkedList;
 import java.util.List;
 
-@Service
+@Service("fakeProductService")
 public class FakeStoreProductService implements ProductService{
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
     //private RedisTemplate<String, Object> redisTemplate;
     private static final String FAKE_STORE_PRODUCT_URL = "https://fakestoreapi.com/products/";
 
@@ -100,6 +101,35 @@ public class FakeStoreProductService implements ProductService{
 
     @Override
     public Page<Product> getAllProducts(int pageNumber, int pageSize) {
+        FakeStoreProductDto[] fakeStoreProductDtos =
+                restTemplate.getForObject("https://fakestoreapi.com/products?limit="+pageSize,FakeStoreProductDto[].class );
+        List<Product> products =  convertFakeStoreProductsToProducts(fakeStoreProductDtos);//  (responseEntity.getBody());
+
+        Page<Product> page = new PageImpl<>(products);
+
+        return page;
+    }
+
+    @Override
+    public Product createProduct(Product p){
+        FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
+        //fakeStoreProductDto.setId(p.getId());
+        fakeStoreProductDto.setTitle(p.getTitle());
+        fakeStoreProductDto.setDescription(p.getDescription());
+        fakeStoreProductDto.setPrice(p.getPrice());
+        fakeStoreProductDto.setImageUrl(p.getImageUrl());
+        fakeStoreProductDto.setCategory(p.getCategory().getTitle());
+        FakeStoreProductDto savedProduct = restTemplate.postForObject(FAKE_STORE_PRODUCT_URL,fakeStoreProductDto, FakeStoreProductDto.class);
+        return convertFakeStoreProductDtoToProduct(savedProduct);
+    }
+
+    @Override
+    public Product updateProductUsingPatch(Product product) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Product>  getProductByIdUsingStoredProc(Long id) {
         return null;
     }
 
@@ -118,8 +148,4 @@ public class FakeStoreProductService implements ProductService{
         return convertFakeStoreProductDtoToProduct(fakeStoreProductDto);
     }
 
-    @Override
-    public Product createProduct(Product product) {
-        return null;
-    }
 }

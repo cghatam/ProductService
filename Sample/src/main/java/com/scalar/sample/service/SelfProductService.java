@@ -6,6 +6,7 @@ import com.scalar.sample.exception.ProductNotFoundException;
 import com.scalar.sample.model.Product;
 import com.scalar.sample.repositories.CategoryRepository;
 import com.scalar.sample.repositories.ProductRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -105,5 +106,21 @@ public class SelfProductService implements ProductService{
         //savedProduct.setCategory(category1);
 
         return savedProduct;
+    }
+
+    @Override
+    public Product updateProductUsingPatch(Product product) {
+
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<Product> getProductByIdUsingStoredProc(Long id){
+        ResponseEntity<Product> response;
+        Product product = productRepository.getProductById(id);
+        response = new ResponseEntity<>(product, HttpStatus.OK);
+        return response;
+
     }
 }
