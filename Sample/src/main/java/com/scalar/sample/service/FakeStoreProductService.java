@@ -29,7 +29,7 @@ public class FakeStoreProductService implements ProductService{
     //private RedisTemplate<String, Object> redisTemplate;
     private static final String FAKE_STORE_PRODUCT_URL = "https://fakestoreapi.com/products/";
 
-    @Autowired
+    //@Autowired
     public FakeStoreProductService(RestTemplate restTemplate//,
                                    //RedisTemplate<String, Object> redisTemplate
     ){
@@ -125,6 +125,7 @@ public class FakeStoreProductService implements ProductService{
 
     @Override
     public Product updateProductUsingPatch(Product product) {
+
         return null;
     }
 
